@@ -1,17 +1,20 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import StyledInput from "../_ui/components/forms/StyledInput";
 import { IRegisterRequest } from "../_models/requests/auth-req.interface";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from "../_utils/schemas/user.schema";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FormFeedback, { IFormFeedbackProps } from "../_ui/components/forms/FormFeedback";
-import { register } from "../_services/auth.service";
 import { AxiosError } from "axios";
+import { useAuth } from "../_context/AuthContext";
 
 export default function Register() {
+  const router = useRouter();
+  const { register: registerUser, isAuthenticated, isLoading } = useAuth();
   const {
     register: registerInput,
     handleSubmit,
@@ -25,10 +28,19 @@ export default function Register() {
     status: IFormFeedbackProps["status"];
   } | null>(null);
 
+  useEffect(() => {
+    if (isAuthenticated && !isLoading) {
+      router.push("/shows");
+    }
+  }, [isAuthenticated, isLoading, router]);
+
   const onSubmit = async (data: IRegisterRequest) => {
     setState({ status: "loading" });
     try {
-      await register(data);
+      await registerUser(data);
+      setState({ status: "success" });
+      // Redirect to home or dashboard after successful registration
+      setTimeout(() => router.push("/shows"), 1000);
     } catch (error) {
       if (error instanceof AxiosError) {
         setState({
@@ -84,7 +96,7 @@ export default function Register() {
           <FormFeedback
             status={state.status}
             errorMessage={state.error}
-            successMessage="Login successful!"
+            successMessage="Registration successful! Redirecting..."
           />
         )}
 

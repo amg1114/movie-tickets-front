@@ -1,17 +1,20 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import StyledInput from "./_ui/components/forms/StyledInput";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "./_utils/schemas/user.schema";
 import { ILoginRequest } from "./_models/requests/auth-req.interface";
-import { login } from "./_services/auth.service";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FormFeedback, { IFormFeedbackProps } from "./_ui/components/forms/FormFeedback";
 import { AxiosError } from "axios";
+import { useAuth } from "./_context/AuthContext";
 
 export default function Login() {
+  const router = useRouter();
+  const { login: loginUser, isAuthenticated, isLoading } = useAuth();
   const {
     register,
     handleSubmit,
@@ -19,6 +22,12 @@ export default function Login() {
   } = useForm<ILoginRequest>({
     resolver: zodResolver(loginSchema),
   });
+
+  useEffect(() => {
+    if (isAuthenticated && !isLoading) {
+      router.push("/shows");
+    }
+  }, [isAuthenticated, isLoading, router]);
 
   const [state, setState] = useState<{
     error?: string;
@@ -28,8 +37,10 @@ export default function Login() {
   const onSubmit = async (data: ILoginRequest) => {
     setState({ status: "loading" });
     try {
-      await login(data);
+      await loginUser(data);
       setState({ status: "success" });
+
+      setTimeout(() => router.push("/shows"), 1000);
     } catch (error) {
       if (error instanceof AxiosError) {
         setState({
@@ -52,7 +63,7 @@ export default function Login() {
       <div className="flex flex-col gap-4">
         <StyledInput
           label="E-mail"
-          id="username"
+          id="email"
           type="text"
           {...register("email")}
           errors={errors.email?.message}
@@ -70,7 +81,7 @@ export default function Login() {
           <FormFeedback
             status={state.status}
             errorMessage={state.error}
-            successMessage="Login successful!"
+            successMessage="Login successful! Redirecting..."
           />
         )}
 
