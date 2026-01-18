@@ -3,7 +3,7 @@ import { IRoom } from "@/_models/entities/room.interface";
 
 export interface IShow {
   id: string;
-  price: string;
+  price: number;
   startTime: Date;
   endTime: Date;
   movie: IMovie;

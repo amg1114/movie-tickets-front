@@ -19,7 +19,7 @@ const StyledSelect = forwardRef<HTMLSelectElement, SelectProps>(
         )}
         <select
           className={clsx(
-            "rounded border bg-white px-4 py-2 text-black outline-none focus:ring-4 focus:ring-blue-800 focus:ring-offset-2",
+            "h-10.5 rounded border bg-white px-4 py-2 text-black outline-none focus:ring-4 focus:ring-blue-800 focus:ring-offset-2",
             {
               "border-gray-200": !errors,
               "border-red-500": !!errors,

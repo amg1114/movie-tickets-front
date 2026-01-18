@@ -4,6 +4,6 @@ export interface IMovie {
   director: string;
   description: string;
   duration: number;
-  releaseDate: Date;
+  releaseDate: string;
   thumbnailUrl: null;
 }
