@@ -4,3 +4,11 @@
   --font-bungee: var(--font-bungee);
   --font-inter: var(--font-inter);
 }
+
+@layer base {
+  .lucide {
+    width: 1em;
+    height: 1em;
+    @apply text-inherit;
+  }
+}
