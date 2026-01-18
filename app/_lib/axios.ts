@@ -19,19 +19,3 @@ api.interceptors.request.use(
     return Promise.reject(error);
   }
 );
-
-// Handle 401 responses (unauthorized)
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Clear auth data on unauthorized
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("auth_token");
-        localStorage.removeItem("auth_user");
-        window.location.href = "/login";
-      }
-    }
-    return Promise.reject(error);
-  }
-);

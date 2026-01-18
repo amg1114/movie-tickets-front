@@ -1,10 +1,10 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { IUser } from "../_models/entities/user.interface";
-import { IAuthResponse } from "../_models/responses/auth-res.interface";
-import { ILoginRequest, IRegisterRequest } from "../_models/requests/auth-req.interface";
-import * as authService from "../_services/auth.service";
+import { IUser } from "@/_models/entities/user.interface";
+import { IAuthResponse } from "@/_models/responses/auth-res.interface";
+import { ILoginRequest, IRegisterRequest } from "@/_models/requests/auth-req.interface";
+import * as authService from "@/_services/auth.service";
 
 interface AuthContextType {
   user: IUser | null;

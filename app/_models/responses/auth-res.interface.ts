@@ -1,4 +1,4 @@
-import { IUser } from "../entities/user.interface";
+import { IUser } from "@/_models/entities/user.interface";
 
 export interface IAuthResponse {
   access_token: string;

@@ -1,6 +1,6 @@
-import { api } from "../_lib/axios";
-import { ILoginRequest, IRegisterRequest } from "../_models/requests/auth-req.interface";
-import { IAuthResponse } from "../_models/responses/auth-res.interface";
+import { api } from "@/_lib/axios";
+import { ILoginRequest, IRegisterRequest } from "@/_models/requests/auth-req.interface";
+import { IAuthResponse } from "@/_models/responses/auth-res.interface";
 
 export function login(data: ILoginRequest) {
   return api.post<IAuthResponse>("/auth/login", data);

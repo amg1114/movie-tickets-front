@@ -1,7 +1,7 @@
 import "../globals.css";
 import { Metadata } from "next";
-import { AuthProvider } from "../_context/AuthContext";
-import { inter, bungee } from "../_ui/components/fonts";
+import { AuthProvider } from "@/_context/AuthContext";
+import { inter, bungee } from "@/_ui/components/fonts";
 
 export const metadata: Metadata = {
   title: "Movie Tickets",

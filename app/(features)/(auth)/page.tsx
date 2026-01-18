@@ -2,15 +2,15 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import StyledInput from "../../_ui/components/forms/StyledInput";
+import StyledInput from "@/_ui/components/forms/StyledInput";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema } from "../../_utils/schemas/user.schema";
-import { ILoginRequest } from "../../_models/requests/auth-req.interface";
+import { loginSchema } from "@/_utils/schemas/user.schema";
+import { ILoginRequest } from "@/_models/requests/auth-req.interface";
 import { useEffect, useState } from "react";
-import FormFeedback, { IFormFeedbackProps } from "../../_ui/components/forms/FormFeedback";
+import FormFeedback, { IFormFeedbackProps } from "@/_ui/components/forms/FormFeedback";
 import { AxiosError } from "axios";
-import { useAuth } from "../../_context/AuthContext";
+import { useAuth } from "@/_context/AuthContext";
 
 export default function Login() {
   const router = useRouter();

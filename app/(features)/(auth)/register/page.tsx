@@ -2,15 +2,15 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import StyledInput from "../../_ui/components/forms/StyledInput";
-import { IRegisterRequest } from "../../_models/requests/auth-req.interface";
+import StyledInput from "@/_ui/components/forms/StyledInput";
+import { IRegisterRequest } from "@/_models/requests/auth-req.interface";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { registerSchema } from "../../_utils/schemas/user.schema";
+import { registerSchema } from "@/_utils/schemas/user.schema";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import FormFeedback, { IFormFeedbackProps } from "../../_ui/components/forms/FormFeedback";
+import FormFeedback, { IFormFeedbackProps } from "@/_ui/components/forms/FormFeedback";
 import { AxiosError } from "axios";
-import { useAuth } from "../../_context/AuthContext";
+import { useAuth } from "@/_context/AuthContext";
 
 export default function Register() {
   const router = useRouter();
