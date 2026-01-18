@@ -61,7 +61,7 @@ export default function ShowDetailPage() {
     },
   ];
   return (
-    <div className="flex w-full flex-col gap-4 md:flex-row md:gap-8">
+    <div className="my-auto flex w-full flex-col gap-4 md:flex-row md:gap-8">
       <aside className="flex flex-1 flex-col gap-8">
         <MovieThumbnail movie={movie} />
         <MovieDetails details={details} />
