@@ -11,4 +11,7 @@
     height: 1em;
     @apply text-inherit;
   }
+  .container {
+    @apply mx-auto xl:max-w-5xl!;
+  }
 }
