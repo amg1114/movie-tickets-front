@@ -16,17 +16,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${bungee.variable} font-inter  antialiased bg-[#010102] text-white`}
+        className={`${inter.variable} ${bungee.variable} font-inter bg-[#010102] text-white antialiased`}
       >
         <div className="flex h-screen">
-          <div className="flex flex-col justify-center p-8 ">{children}</div>
-          <div className="flex-1 ">
+          <div className="flex flex-col justify-center p-8">{children}</div>
+          <div className="flex-1">
             <Image
               src="/auth-bg.jpg"
               alt="Login Illustration"
               width={1920}
               height={1080}
-              className="object-contain h-full"
+              className="h-full object-contain"
             />
           </div>
         </div>

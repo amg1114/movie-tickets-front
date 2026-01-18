@@ -9,17 +9,13 @@ export interface IFormFeedbackProps {
   isSubmitting?: boolean;
 }
 
-export default function FormFeedback({
-  status,
-  successMessage,
-  errorMessage,
-}: IFormFeedbackProps) {
+export default function FormFeedback({ status, successMessage, errorMessage }: IFormFeedbackProps) {
   return (
     <div
-      className={clsx("p-4 rounded border text-center font-medium", {
-        "text-red-500 bg-red-200 border-red-500": status === "error",
-        "text-green-700 bg-green-200 border-green-700": status === "success",
-        "text-blue-500 bg-blue-200 border-blue-500": status === "loading",
+      className={clsx("rounded border p-4 text-center font-medium", {
+        "border-red-500 bg-red-200 text-red-500": status === "error",
+        "border-green-700 bg-green-200 text-green-700": status === "success",
+        "border-blue-500 bg-blue-200 text-blue-500": status === "loading",
       })}
     >
       {status === "error" && errorMessage}
