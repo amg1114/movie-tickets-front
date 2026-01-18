@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { bungee, inter } from "./ui/components/fonts";
+import { bungee, inter } from "./_ui/components/fonts";
 import Image from "next/image";
 
 export const metadata: Metadata = {
