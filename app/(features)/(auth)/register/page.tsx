@@ -2,26 +2,31 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import StyledInput from "./_ui/components/forms/StyledInput";
-import { useForm } from "react-hook-form";
+import StyledInput from "../../_ui/components/forms/StyledInput";
+import { IRegisterRequest } from "../../_models/requests/auth-req.interface";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema } from "./_utils/schemas/user.schema";
-import { ILoginRequest } from "./_models/requests/auth-req.interface";
+import { registerSchema } from "../../_utils/schemas/user.schema";
+import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import FormFeedback, { IFormFeedbackProps } from "./_ui/components/forms/FormFeedback";
+import FormFeedback, { IFormFeedbackProps } from "../../_ui/components/forms/FormFeedback";
 import { AxiosError } from "axios";
-import { useAuth } from "./_context/AuthContext";
+import { useAuth } from "../../_context/AuthContext";
 
-export default function Login() {
+export default function Register() {
   const router = useRouter();
-  const { login: loginUser, isAuthenticated, isLoading } = useAuth();
+  const { register: registerUser, isAuthenticated, isLoading } = useAuth();
   const {
-    register,
+    register: registerInput,
     handleSubmit,
     formState: { errors },
-  } = useForm<ILoginRequest>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<IRegisterRequest>({
+    resolver: zodResolver(registerSchema),
   });
+
+  const [state, setState] = useState<{
+    error?: string;
+    status: IFormFeedbackProps["status"];
+  } | null>(null);
 
   useEffect(() => {
     if (isAuthenticated && !isLoading) {
@@ -29,17 +34,12 @@ export default function Login() {
     }
   }, [isAuthenticated, isLoading, router]);
 
-  const [state, setState] = useState<{
-    error?: string;
-    status: IFormFeedbackProps["status"];
-  } | null>(null);
-
-  const onSubmit = async (data: ILoginRequest) => {
+  const onSubmit = async (data: IRegisterRequest) => {
     setState({ status: "loading" });
     try {
-      await loginUser(data);
+      await registerUser(data);
       setState({ status: "success" });
-
+      // Redirect to home or dashboard after successful registration
       setTimeout(() => router.push("/shows"), 1000);
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -62,18 +62,33 @@ export default function Login() {
     >
       <div className="flex flex-col gap-4">
         <StyledInput
+          label="Name"
+          id="name"
+          {...registerInput("name")}
+          errors={errors.name?.message}
+        />
+
+        <StyledInput
           label="E-mail"
           id="email"
-          type="text"
-          {...register("email")}
+          type="email"
+          {...registerInput("email")}
           errors={errors.email?.message}
+        />
+
+        <StyledInput
+          label="Phone Number"
+          id="phone"
+          type="phone"
+          {...registerInput("phone")}
+          errors={errors.phone?.message}
         />
 
         <StyledInput
           label="Password"
           id="password"
           type="password"
-          {...register("password")}
+          {...registerInput("password")}
           errors={errors.password?.message}
         />
 
@@ -81,19 +96,19 @@ export default function Login() {
           <FormFeedback
             status={state.status}
             errorMessage={state.error}
-            successMessage="Login successful! Redirecting..."
+            successMessage="Registration successful! Redirecting..."
           />
         )}
 
         <footer className="flex flex-col gap-4 text-sm">
-          <Link href="/register" className="text-end underline hover:text-purple-700">
-            You don&apos;t have an account?
+          <Link href="/" className="text-end underline hover:text-purple-700">
+            Already have an account?
           </Link>
           <button
             type="submit"
             className="w-full rounded bg-purple-600 px-4 py-2 font-bold text-white hover:bg-purple-700"
           >
-            Log In
+            Register
           </button>
         </footer>
       </div>
