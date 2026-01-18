@@ -9,7 +9,7 @@ type DatePickerProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, "type">
 const StyledDatePicker = forwardRef<HTMLInputElement, DatePickerProps>(
   ({ label, errors, ...props }, ref) => {
     return (
-      <div className="flex flex-col">
+      <div className="flex w-full flex-col">
         {label && (
           <label className="font-bungee mb-2" htmlFor={props.id}>
             {label}

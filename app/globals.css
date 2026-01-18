@@ -12,6 +12,6 @@
     @apply text-inherit;
   }
   .container {
-    @apply mx-auto xl:max-w-5xl!;
+    @apply mx-auto px-5 lg:max-w-4xl! lg:px-0 xl:max-w-5xl!;
   }
 }

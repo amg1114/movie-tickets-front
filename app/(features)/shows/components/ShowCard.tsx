@@ -34,27 +34,29 @@ export default function ShowCard({ show }: IShowCardProps) {
     },
   ];
   return (
-    <div className="relative flex flex-col rounded-xl bg-purple-500/20 p-4 transition-colors hover:bg-white/10">
-      <figure className="mb-4 flex aspect-3/4 w-full items-center justify-center overflow-hidden rounded-xl bg-purple-500/20">
+    <div className="relative flex flex-wrap gap-x-4 rounded-xl bg-purple-500/20 p-2 transition-colors hover:bg-white/10 md:flex-col md:p-4">
+      <figure className="flex aspect-3/4 w-full items-start overflow-hidden rounded-xl max-sm:max-w-25 md:mb-4 md:items-center md:justify-center md:bg-purple-500/20">
         {movie.thumbnailUrl && (
           <Image
             src={movie.thumbnailUrl}
             alt={movie.title}
             width={300}
             height={400}
-            className="object-cover"
+            className="object-contain"
           />
         )}
         {!movie.thumbnailUrl && <FilmIcon className="text-3xl text-white" strokeWidth={2} />}
       </figure>
-      <Link
-        href={`/shows/${show.id}`}
-        className="font-bungee mb-2 transition-colors hover:text-purple-500"
-      >
-        {movie.title} <span className="absolute inset-0"></span>
-      </Link>
-      <p>{movie.description}</p>
-      <ul>
+      <div className="flex flex-1 flex-col gap-2">
+        <Link
+          href={`/shows/${show.id}`}
+          className="font-bungee transition-colors hover:text-purple-500"
+        >
+          {movie.title} <span className="absolute inset-0"></span>
+        </Link>
+        <p>{movie.description}</p>
+      </div>
+      <ul className="max-sm:grid max-sm:w-full max-sm:grid-cols-2 max-sm:gap-x-2">
         {details.map((detail, index) => (
           <li key={index} className={`mt-2 flex items-center gap-2 text-sm ${inter.className}`}>
             {detail.icon}
