@@ -23,7 +23,9 @@ export const loginSchema = z.object({
 
 export const registerSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters long" }),
-  phone: z.string().min(10, { message: "Phone number must be at least 10 digits long" }),
+  phone: z.string().regex(/^(\+?57)?3\d{9}$/, {
+    message: "Invalid phone number (e.g., 3001234567).",
+  }),
   email: z.email({ message: "Invalid email address" }),
   password: passwordRequirements,
 });

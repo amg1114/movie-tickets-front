@@ -19,15 +19,23 @@ export default function RootLayout({
         className={`${inter.variable} ${bungee.variable} font-inter bg-[#010102] text-white antialiased`}
       >
         <div className="flex h-screen">
-          <div className="flex flex-col justify-center p-8">{children}</div>
-          <div className="flex-1">
+          <div className="relative z-10 flex flex-col justify-center max-sm:w-full sm:p-8">
+            <h1 className="font-bungee mb-8 text-center text-3xl">
+              Movie
+              <br />
+              Tickets
+            </h1>
+            {children}
+          </div>
+          <div className="flex-1 max-sm:absolute max-sm:inset-0 max-sm:flex max-sm:items-end">
             <Image
               src="/auth-bg.jpg"
               alt="Login Illustration"
               width={1920}
               height={1080}
-              className="h-full object-contain"
+              className="object-contain sm:h-full"
             />
+            <div className="absolute bg-gradient-to-b from-black to-transparent sm:hidden"></div>
           </div>
         </div>
       </body>
