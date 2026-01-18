@@ -33,7 +33,10 @@ export function Header() {
               (route, index) =>
                 (!route.adminOnly || (user && user.role === "admin")) && (
                   <li key={index}>
-                    <Link href={route.href} className="font-semibold uppercase">
+                    <Link
+                      href={route.href}
+                      className="font-semibold uppercase hover:text-purple-700"
+                    >
                       {route.label}
                     </Link>
                   </li>
