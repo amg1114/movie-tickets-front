@@ -14,7 +14,7 @@ import {
   TableCell,
 } from "@/_ui/components/table";
 import { ActionButton } from "@/_ui/components/table/ActionButton";
-import { FilmIcon, Plus, ImageIcon } from "lucide-react";
+import { FilmIcon, Plus } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
