@@ -5,7 +5,7 @@ import { LogOutIcon } from "lucide-react";
 import Link from "next/link";
 
 export function Header() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   const routes = [
     { href: "/shows", label: "Shows", adminOnly: false },
@@ -28,7 +28,7 @@ export function Header() {
             </Link>
           </div>
 
-          <ul>
+          <ul className="flex gap-5">
             {routes.map(
               (route, index) =>
                 (!route.adminOnly || (user && user.role === "admin")) && (
@@ -47,6 +47,7 @@ export function Header() {
               <button
                 type="button"
                 className="flex w-auto cursor-pointer items-center gap-1.5 rounded px-2 py-1 text-sm font-semibold hover:bg-red-500"
+                onClick={logout}
               >
                 <LogOutIcon /> Log Out
               </button>
