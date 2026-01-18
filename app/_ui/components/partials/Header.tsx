@@ -6,6 +6,15 @@ import Link from "next/link";
 
 export function Header() {
   const { user } = useAuth();
+
+  const routes = [
+    { href: "/shows", label: "Shows", adminOnly: false },
+    { href: "/rooms", label: "Rooms", adminOnly: true },
+    { href: "/movies", label: "Movies", adminOnly: true },
+    { href: "/users", label: "Users", adminOnly: true },
+    { href: "/tickets", label: "Tickets", adminOnly: true },
+  ];
+
   return (
     <header>
       <div className="container">
@@ -18,6 +27,20 @@ export function Header() {
               MT
             </Link>
           </div>
+
+          <ul>
+            {routes.map(
+              (route, index) =>
+                (!route.adminOnly || (user && user.role === "admin")) && (
+                  <li key={index}>
+                    <Link href={route.href} className="font-semibold uppercase">
+                      {route.label}
+                    </Link>
+                  </li>
+                )
+            )}
+          </ul>
+
           {user && (
             <div className="flex flex-col items-end">
               <span className="font-bungee text-sm">{user.name}</span>
