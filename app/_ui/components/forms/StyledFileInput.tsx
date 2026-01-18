@@ -15,7 +15,7 @@ interface StyledFileInputProps {
 }
 
 const StyledFileInput = forwardRef<HTMLInputElement, StyledFileInputProps>(
-  ({ label, errors, accept = "image/*", maxSizeMB = 5, onFileChange, showPreview = true }) => {
+  ({ label, errors, accept = "image/*", maxSizeMB = 5, onFileChange, showPreview = true }, ref) => {
     const [preview, setPreview] = useState<string | null>(null);
     const [error, setError] = useState<string>("");
     const inputRef = useRef<HTMLInputElement>(null);
