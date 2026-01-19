@@ -1,7 +1,7 @@
 "use client";
 
-import { MovieFormModal } from "@/(features)/(admin)/movies/components/MovieFormModal";
-import { ThumbnailUploadModal } from "@/(features)/(admin)/movies/components/ThumbnailUploadModal";
+import { MovieFormModal } from "@/(features)/admin/movies/components/MovieFormModal";
+import { ThumbnailUploadModal } from "@/(features)/admin/movies/components/ThumbnailUploadModal";
 import { api } from "@/_lib/axios";
 import { IMovie } from "@/_models/entities/movie.interface";
 import { LoadingSpinner } from "@/_ui/components/partials/LoadingSpinner";

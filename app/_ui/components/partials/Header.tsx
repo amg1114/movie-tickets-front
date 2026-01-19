@@ -9,10 +9,11 @@ export function Header() {
 
   const routes = [
     { href: "/shows", label: "Shows", adminOnly: false },
-    { href: "/rooms", label: "Rooms", adminOnly: true },
-    { href: "/movies", label: "Movies", adminOnly: true },
-    { href: "/users", label: "Users", adminOnly: true },
-    { href: "/tickets", label: "Tickets", adminOnly: true },
+    { href: "/admin/shows", label: "Shows", adminOnly: true },
+    { href: "/admin/rooms", label: "Rooms", adminOnly: true },
+    { href: "/admin/movies", label: "Movies", adminOnly: true },
+    { href: "/admin/users", label: "Users", adminOnly: true },
+    { href: "/admin/tickets", label: "Tickets", adminOnly: true },
   ];
 
   return (

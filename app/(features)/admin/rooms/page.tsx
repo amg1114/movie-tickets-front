@@ -14,7 +14,7 @@ import { api } from "@/_lib/axios";
 import { IRoom } from "@/_models/entities/room.interface";
 import { LoadingSpinner } from "@/_ui/components/partials/LoadingSpinner";
 import { Plus } from "lucide-react";
-import { RoomFormModal } from "@/(features)/(admin)/rooms/components/RoomFormModal";
+import { RoomFormModal } from "@/(features)/admin/rooms/components/RoomFormModal";
 
 export default function RoomsPage() {
   const [loading, setLoading] = useState(true);
