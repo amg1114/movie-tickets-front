@@ -24,6 +24,7 @@ A modern, full-featured cinema ticket booking platform built with Next.js 16, Re
 ## Features
 
 ### Customer Features
+
 - User registration and authentication
 - Browse available movie shows with advanced filtering
 - Filter shows by movie title, date, and theater room
@@ -33,6 +34,7 @@ A modern, full-featured cinema ticket booking platform built with Next.js 16, Re
 - View booking confirmation and ticket details
 
 ### Admin Features
+
 - Comprehensive dashboard for cinema management
 - Movie catalog management (add, edit, delete movies)
 - Upload and manage movie thumbnails
@@ -43,6 +45,7 @@ A modern, full-featured cinema ticket booking platform built with Next.js 16, Re
 - Disable/enable user accounts
 
 ### Technical Features
+
 - Server-side rendering with Next.js 16
 - Client-side navigation with React Router
 - Protected routes with role-based access control
@@ -56,27 +59,33 @@ A modern, full-featured cinema ticket booking platform built with Next.js 16, Re
 ## Technology Stack
 
 ### Core Framework
+
 - **Next.js 16.1.3** - React framework with App Router
 - **React 19.2.3** - UI library
 - **TypeScript 5** - Type safety and developer experience
 
 ### State Management & Forms
+
 - **React Hook Form 7.71.1** - Performant form handling
 - **Zod 4.3.5** - Schema validation
 - **@hookform/resolvers 5.2.2** - Form validation integration
 
 ### HTTP Client
+
 - **Axios 1.13.2** - HTTP requests with interceptors
 
 ### UI & Styling
+
 - **Tailwind CSS 4** - Utility-first CSS framework
 - **Lucide React 0.562.0** - Modern icon library
 - **clsx 2.1.1** - Conditional className utilities
 
 ### Date & Time
+
 - **Moment.js 2.30.1** - Date manipulation and formatting
 
 ### Development Tools
+
 - **ESLint 9** - Code linting
 - **Prettier 3.8.0** - Code formatting
 - **Prettier Plugin Tailwind 0.7.2** - Tailwind class sorting
@@ -142,12 +151,14 @@ movie-tickets-front/
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/amg1114/movie-tickets-front.git
 cd movie-tickets-front
 ```
 
 2. Install dependencies:
+
 ```bash
 pnpm install
 # or
@@ -157,6 +168,7 @@ yarn install
 ```
 
 3. Create environment variables file:
+
 ```bash
 cp .env.example .env.local
 ```
@@ -164,6 +176,7 @@ cp .env.example .env.local
 4. Configure environment variables (see [Environment Variables](#environment-variables))
 
 5. Run the development server:
+
 ```bash
 pnpm dev
 # or
@@ -204,6 +217,7 @@ NEXT_PUBLIC_ENABLE_DEBUG=true
 ## Available Scripts
 
 ### Development
+
 ```bash
 pnpm dev          # Start development server
 pnpm build        # Build for production
@@ -211,6 +225,7 @@ pnpm start        # Start production server
 ```
 
 ### Code Quality
+
 ```bash
 pnpm lint         # Run ESLint
 pnpm format       # Format code with Prettier
@@ -218,6 +233,7 @@ pnpm format:check # Check code formatting
 ```
 
 ### Type Checking
+
 ```bash
 pnpm type-check   # Run TypeScript compiler check
 ```
