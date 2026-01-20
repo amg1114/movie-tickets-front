@@ -14,6 +14,7 @@ import { api } from "@/_lib/axios";
 import { LoadingSpinner } from "@/_ui/components/partials/LoadingSpinner";
 import { IUser } from "@/_models/entities/user.interface";
 import { useAuth } from "@/_context/AuthContext";
+import { AxiosError } from "axios";
 
 export default function UsersPage() {
   const { user: loggedUser } = useAuth();
@@ -26,8 +27,12 @@ export default function UsersPage() {
       try {
         const res = await api.get<IUser[]>("/users");
         setUsers(res.data);
-      } catch (error) {
-        console.error("Error fetching users:", error);
+      } catch (error: unknown) {
+        if (error instanceof AxiosError && error.response?.status === 404) {
+          setUsers([]);
+        } else {
+          console.error("Error fetching users:", error);
+        }
       } finally {
         setLoading(false);
       }
@@ -45,8 +50,12 @@ export default function UsersPage() {
     try {
       const res = await api.get<IUser[]>("/users");
       setUsers(res.data);
-    } catch (error) {
-      console.error("Error fetching users:", error);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError && error.response?.status === 404) {
+        setUsers([]);
+      } else {
+        console.error("Error fetching users:", error);
+      }
     } finally {
       setLoading(false);
     }

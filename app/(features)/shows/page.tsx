@@ -8,6 +8,7 @@ import StyledDatePicker from "@/_ui/components/forms/StyledDatePicker";
 import StyledInput from "@/_ui/components/forms/StyledInput";
 import StyledSelect from "@/_ui/components/forms/StyledSelect";
 import { LoadingSpinner } from "@/_ui/components/partials/LoadingSpinner";
+import { AxiosError } from "axios";
 import { BrushCleaningIcon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -58,8 +59,12 @@ export default function ShowsPage() {
 
         const response = await api.get<IShow[]>(`/shows/available?${params.toString()}`);
         setShows(response.data);
-      } catch (error) {
-        console.error("Error fetching shows:", error);
+      } catch (error: unknown) {
+        if (error instanceof AxiosError && error.response?.status === 404) {
+          setShows([]);
+        } else {
+          console.error("Error fetching shows:", error);
+        }
       } finally {
         setLoading(false);
       }
@@ -78,8 +83,12 @@ export default function ShowsPage() {
       try {
         const response = await api.get<IRoom[]>("/rooms");
         setRooms(response.data);
-      } catch (error) {
-        console.error("Error fetching rooms:", error);
+      } catch (error: unknown) {
+        if (error instanceof AxiosError && error.response?.status === 404) {
+          setRooms([]);
+        } else {
+          console.error("Error fetching rooms:", error);
+        }
       }
     };
 

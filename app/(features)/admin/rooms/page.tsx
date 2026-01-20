@@ -15,6 +15,7 @@ import { IRoom } from "@/_models/entities/room.interface";
 import { LoadingSpinner } from "@/_ui/components/partials/LoadingSpinner";
 import { Plus } from "lucide-react";
 import { RoomFormModal } from "@/(features)/admin/rooms/components/RoomFormModal";
+import { AxiosError } from "axios";
 
 export default function RoomsPage() {
   const [loading, setLoading] = useState(true);
@@ -27,8 +28,12 @@ export default function RoomsPage() {
       try {
         const res = await api.get<IRoom[]>("/rooms");
         setRooms(res.data);
-      } catch (error) {
-        console.error("Error fetching rooms:", error);
+      } catch (error: unknown) {
+        if (error instanceof AxiosError && error.response?.status === 404) {
+          setRooms([]);
+        } else {
+          console.error("Error fetching rooms:", error);
+        }
       } finally {
         setLoading(false);
       }

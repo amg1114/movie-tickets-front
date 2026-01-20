@@ -14,6 +14,7 @@ import {
   TableCell,
 } from "@/_ui/components/table";
 import { ActionButton } from "@/_ui/components/table/ActionButton";
+import { AxiosError } from "axios";
 import { FilmIcon, Plus } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -30,8 +31,12 @@ export default function MoviesAdminPage() {
       try {
         const res = await api.get<IMovie[]>("/movies");
         setMovies(res.data);
-      } catch (error) {
-        console.error("Error fetching movies:", error);
+      } catch (error: unknown) {
+        if (error instanceof AxiosError && error.response?.status === 404) {
+          setMovies([]);
+        } else {
+          console.error("Error fetching movies:", error);
+        }
       } finally {
         setLoading(false);
       }

@@ -16,6 +16,7 @@ import { Plus } from "lucide-react";
 import { ShowFormModal } from "@/(features)/admin/shows/components/ShowFormModal";
 import { IShow } from "@/_models/entities/show.interface";
 import Link from "next/link";
+import { AxiosError } from "axios";
 
 export default function AdminShowsPage() {
   const [loading, setLoading] = useState(true);
@@ -28,8 +29,12 @@ export default function AdminShowsPage() {
       try {
         const res = await api.get<IShow[]>("/shows");
         setShows(res.data);
-      } catch (error) {
-        console.error("Error fetching shows:", error);
+      } catch (error: unknown) {
+        if (error instanceof AxiosError && error.response?.status === 404) {
+          setShows([]);
+        } else {
+          console.error("Error fetching shows:", error);
+        }
       } finally {
         setLoading(false);
       }
@@ -70,8 +75,12 @@ export default function AdminShowsPage() {
     try {
       const res = await api.get<IShow[]>("/shows");
       setShows(res.data);
-    } catch (error) {
-      console.error("Error fetching shows:", error);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError && error.response?.status === 404) {
+        setShows([]);
+      } else {
+        console.error("Error fetching shows:", error);
+      }
     } finally {
       setLoading(false);
     }
@@ -116,7 +125,7 @@ export default function AdminShowsPage() {
                 })}
               </TableCell>
               <TableCell>
-                {show.startTime >= new Date() && (
+                {new Date(show.startTime) >= new Date() && (
                   <div className="flex gap-2">
                     <ActionButton variant="secondary" onClick={() => openEditModal(show)}>
                       Edit

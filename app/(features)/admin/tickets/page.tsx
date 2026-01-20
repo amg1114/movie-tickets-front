@@ -16,6 +16,7 @@ import { ITicket } from "@/_models/entities/ticket.interface";
 import Link from "next/link";
 import { GlobeIcon } from "lucide-react";
 import clsx from "clsx";
+import { AxiosError } from "axios";
 
 export default function TicketsPage() {
   const [loading, setLoading] = useState(true);
@@ -26,8 +27,12 @@ export default function TicketsPage() {
       try {
         const res = await api.get<ITicket[]>("/tickets");
         setTickets(res.data);
-      } catch (error) {
-        console.error("Error fetching tickets:", error);
+      } catch (error: unknown) {
+        if (error instanceof AxiosError && error.response?.status === 404) {
+          setTickets([]);
+        } else {
+          console.error("Error fetching tickets:", error);
+        }
       } finally {
         setLoading(false);
       }
@@ -45,8 +50,12 @@ export default function TicketsPage() {
     try {
       const res = await api.get<ITicket[]>("/tickets");
       setTickets(res.data);
-    } catch (error) {
-      console.error("Error fetching tickets:", error);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError && error.response?.status === 404) {
+        setTickets([]);
+      } else {
+        console.error("Error fetching tickets:", error);
+      }
     } finally {
       setLoading(false);
     }
