@@ -6,6 +6,7 @@ import StyledFileInput from "@/_ui/components/forms/StyledFileInput";
 import { IMovie } from "@/_models/entities/movie.interface";
 import { api } from "@/_lib/axios";
 import { AxiosError } from "axios";
+import FormFeedback, { IFormFeedbackProps } from "@/_ui/components/forms/FormFeedback";
 
 interface ThumbnailUploadModalProps {
   isOpen: boolean;
@@ -22,18 +23,21 @@ export function ThumbnailUploadModal({
 }: ThumbnailUploadModalProps) {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [error, setError] = useState<string>("");
+  const [submitState, setSubmitState] = useState<{
+    status: IFormFeedbackProps["status"];
+    error?: string;
+  } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!file) {
-      setError("Please select a file");
+      setSubmitState({ status: "error", error: "Please select a file" });
       return;
     }
 
     setIsUploading(true);
-    setError("");
+    setSubmitState({ status: "loading" });
 
     try {
       const formData = new FormData();
@@ -45,14 +49,17 @@ export function ThumbnailUploadModal({
         },
       });
 
+      setSubmitState({ status: "success" });
       onSuccess(response.data);
-      handleClose();
+      setTimeout(() => {
+        handleClose();
+      }, 1000);
     } catch (error: unknown) {
       console.error("Error uploading thumbnail:", error);
-      if (error instanceof AxiosError && error.response) {
-        setError(error.response.data.message || "Failed to upload thumbnail");
+      if (error instanceof AxiosError && error.response?.data?.message) {
+        setSubmitState({ status: "error", error: error.response.data.message });
       } else {
-        setError("Failed to upload thumbnail");
+        setSubmitState({ status: "error", error: "Failed to upload thumbnail. Please try again." });
       }
     } finally {
       setIsUploading(false);
@@ -61,7 +68,7 @@ export function ThumbnailUploadModal({
 
   const handleClose = () => {
     setFile(null);
-    setError("");
+    setSubmitState(null);
     onClose();
   };
 
@@ -76,10 +83,12 @@ export function ThumbnailUploadModal({
           showPreview
         />
 
-        {error && (
-          <div className="rounded border border-red-500 bg-red-50 p-3 text-sm text-red-700">
-            {error}
-          </div>
+        {submitState && (
+          <FormFeedback
+            status={submitState.status}
+            errorMessage={submitState.error}
+            successMessage="Thumbnail uploaded successfully!"
+          />
         )}
 
         <div className="flex justify-end gap-3 pt-4">

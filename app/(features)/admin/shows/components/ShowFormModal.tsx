@@ -12,6 +12,8 @@ import { IShow } from "@/_models/entities/show.interface";
 import { IMovie } from "@/_models/entities/movie.interface";
 import { IRoom } from "@/_models/entities/room.interface";
 import { api } from "@/_lib/axios";
+import FormFeedback, { IFormFeedbackProps } from "@/_ui/components/forms/FormFeedback";
+import { AxiosError } from "axios";
 
 const showSchema = z.object({
   movieId: z.string().min(1, { message: "Movie is required" }),
@@ -33,6 +35,10 @@ interface ShowFormModalProps {
 
 export function ShowFormModal({ isOpen, onClose, onSubmit, show }: ShowFormModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitState, setSubmitState] = useState<{
+    status: IFormFeedbackProps["status"];
+    error?: string;
+  } | null>(null);
   const [movies, setMovies] = useState<IMovie[]>([]);
   const [rooms, setRooms] = useState<IRoom[]>([]);
 
@@ -92,12 +98,22 @@ export function ShowFormModal({ isOpen, onClose, onSubmit, show }: ShowFormModal
 
   const handleFormSubmit = async (data: ShowFormData) => {
     setIsSubmitting(true);
+    setSubmitState({ status: "loading" });
     try {
       await onSubmit(data);
+      setSubmitState({ status: "success" });
       reset();
-      onClose();
+      setTimeout(() => {
+        onClose();
+        setSubmitState(null);
+      }, 1000);
     } catch (error) {
       console.error("Error submitting form:", error);
+      if (error instanceof AxiosError && error.response?.data?.message) {
+        setSubmitState({ status: "error", error: error.response.data.message });
+      } else {
+        setSubmitState({ status: "error", error: "Failed to save show. Please try again." });
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -105,6 +121,7 @@ export function ShowFormModal({ isOpen, onClose, onSubmit, show }: ShowFormModal
 
   const handleClose = () => {
     reset();
+    setSubmitState(null);
     onClose();
   };
 
@@ -154,6 +171,14 @@ export function ShowFormModal({ isOpen, onClose, onSubmit, show }: ShowFormModal
           {...register("price", { valueAsNumber: true })}
           errors={errors.price?.message}
         />
+
+        {submitState && (
+          <FormFeedback
+            status={submitState.status}
+            errorMessage={submitState.error}
+            successMessage="Show saved successfully!"
+          />
+        )}
 
         <div className="flex justify-end gap-3 pt-4">
           <button

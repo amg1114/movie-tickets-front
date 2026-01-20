@@ -7,6 +7,8 @@ import { z } from "zod";
 import { Modal } from "@/_ui/components/modal";
 import StyledInput from "@/_ui/components/forms/StyledInput";
 import { IRoom } from "@/_models/entities/room.interface";
+import FormFeedback, { IFormFeedbackProps } from "@/_ui/components/forms/FormFeedback";
+import { AxiosError } from "axios";
 
 const roomSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
@@ -27,6 +29,10 @@ interface RoomFormModalProps {
 
 export function RoomFormModal({ isOpen, onClose, onSubmit, room }: RoomFormModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitState, setSubmitState] = useState<{
+    status: IFormFeedbackProps["status"];
+    error?: string;
+  } | null>(null);
 
   const {
     register,
@@ -61,12 +67,22 @@ export function RoomFormModal({ isOpen, onClose, onSubmit, room }: RoomFormModal
 
   const handleFormSubmit = async (data: RoomFormData) => {
     setIsSubmitting(true);
+    setSubmitState({ status: "loading" });
     try {
       await onSubmit(data);
+      setSubmitState({ status: "success" });
       reset();
-      onClose();
+      setTimeout(() => {
+        onClose();
+        setSubmitState(null);
+      }, 1000);
     } catch (error) {
       console.error("Error submitting form:", error);
+      if (error instanceof AxiosError && error.response?.data?.message) {
+        setSubmitState({ status: "error", error: error.response.data.message });
+      } else {
+        setSubmitState({ status: "error", error: "Failed to save room. Please try again." });
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -74,6 +90,7 @@ export function RoomFormModal({ isOpen, onClose, onSubmit, room }: RoomFormModal
 
   const handleClose = () => {
     reset();
+    setSubmitState(null);
     onClose();
   };
 
@@ -85,11 +102,6 @@ export function RoomFormModal({ isOpen, onClose, onSubmit, room }: RoomFormModal
       size="md"
     >
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
-        {room && (
-          <div className="text-sm text-gray-500">
-            Editing Room ID: <strong>{room.id}</strong>
-          </div>
-        )}
         <StyledInput
           label="Room Name"
           id="name"
@@ -113,6 +125,14 @@ export function RoomFormModal({ isOpen, onClose, onSubmit, room }: RoomFormModal
           {...register("capacity", { valueAsNumber: true })}
           errors={errors.capacity?.message}
         />
+
+        {submitState && (
+          <FormFeedback
+            status={submitState.status}
+            errorMessage={submitState.error}
+            successMessage="Room saved successfully!"
+          />
+        )}
 
         <div className="flex justify-end gap-3 pt-4">
           <button
