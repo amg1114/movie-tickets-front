@@ -16,6 +16,7 @@ import { ITicket } from "@/_models/entities/ticket.interface";
 import Link from "next/link";
 import { GlobeIcon } from "lucide-react";
 import clsx from "clsx";
+import { formatCurrency } from "@/_utils/dateUtils";
 import { AxiosError } from "axios";
 
 export default function TicketsPage() {
@@ -122,13 +123,7 @@ export default function TicketsPage() {
               </TableCell>
 
               <TableCell>{ticket.quantity}</TableCell>
-              <TableCell>
-                $
-                {ticket.total_amount.toLocaleString("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                })}
-              </TableCell>
+              <TableCell>{formatCurrency(ticket.total_amount)}</TableCell>
               <TableCell>
                 <div className="flex gap-2">
                   {ticket.status === "PENDING" && (

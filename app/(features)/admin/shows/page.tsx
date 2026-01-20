@@ -17,6 +17,7 @@ import { ShowFormModal } from "@/(features)/admin/shows/components/ShowFormModal
 import { IShow } from "@/_models/entities/show.interface";
 import Link from "next/link";
 import { AxiosError } from "axios";
+import { formatDateTime, formatCurrency } from "@/_utils/dateUtils";
 
 export default function AdminShowsPage() {
   const [loading, setLoading] = useState(true);
@@ -115,15 +116,9 @@ export default function AdminShowsPage() {
               <TableCell>
                 <Link href="/admin/movies">{show.movie.title}</Link>
               </TableCell>
-              <TableCell>{new Date(show.startTime).toLocaleString()}</TableCell>
-              <TableCell>{new Date(show.endTime).toLocaleString()}</TableCell>
-              <TableCell>
-                $
-                {show.price.toLocaleString("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                })}
-              </TableCell>
+              <TableCell>{formatDateTime(show.startTime)}</TableCell>
+              <TableCell>{formatDateTime(show.endTime)}</TableCell>
+              <TableCell>{formatCurrency(show.price)}</TableCell>
               <TableCell>
                 {new Date(show.startTime) >= new Date() && (
                   <div className="flex gap-2">

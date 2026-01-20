@@ -14,6 +14,7 @@ import {
   TableCell,
 } from "@/_ui/components/table";
 import { ActionButton } from "@/_ui/components/table/ActionButton";
+import { formatDate } from "@/_utils/dateUtils";
 import { AxiosError } from "axios";
 import { FilmIcon, Plus } from "lucide-react";
 import Image from "next/image";
@@ -146,7 +147,7 @@ export default function MoviesAdminPage() {
                 </p>
               </TableCell>
               <TableCell>{movie.duration}</TableCell>
-              <TableCell>{new Date(movie.releaseDate).toLocaleDateString()}</TableCell>
+              <TableCell>{formatDate(movie.releaseDate)}</TableCell>
               <TableCell>
                 <div className="flex flex-col gap-2">
                   <ActionButton variant="secondary" onClick={() => openEditModal(movie)}>

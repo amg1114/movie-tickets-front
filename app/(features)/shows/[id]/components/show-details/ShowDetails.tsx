@@ -1,29 +1,21 @@
 import { IShow } from "@/_models/entities/show.interface";
 import { CalendarDaysIcon, ClapperboardIcon, DollarSignIcon } from "lucide-react";
 import { ReactNode } from "react";
+import { formatTime, formatCurrency } from "@/_utils/dateUtils";
 
 export function ShowDetails({ show }: { show: IShow }) {
   const { room, price } = show;
-
-  const startTime = new Date(show.startTime);
-  const endTime = new Date(show.endTime);
 
   return (
     <div className="grid w-full grid-cols-2 gap-y-4">
       <ShowDetail
         label="Start Time"
-        description={startTime.toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        })}
+        description={formatTime(show.startTime)}
         icon={<CalendarDaysIcon className="text-2xl" strokeWidth={2.5} />}
       />
       <ShowDetail
         label="End Time"
-        description={endTime.toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        })}
+        description={formatTime(show.endTime)}
         icon={<CalendarDaysIcon className="text-2xl" strokeWidth={2.5} />}
       />
       <ShowDetail
@@ -33,7 +25,7 @@ export function ShowDetails({ show }: { show: IShow }) {
       />
       <ShowDetail
         label="Price"
-        description={price.toLocaleString("en-US", { style: "currency", currency: "USD" })}
+        description={formatCurrency(price)}
         icon={<DollarSignIcon className="text-2xl" strokeWidth={2.5} />}
       />
     </div>

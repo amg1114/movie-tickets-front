@@ -4,8 +4,8 @@ import { IRoom } from "@/_models/entities/room.interface";
 export interface IShow {
   id: string;
   price: number;
-  startTime: Date;
-  endTime: Date;
+  startTime: string;
+  endTime: string;
   movie: IMovie;
   room: IRoom;
 }
