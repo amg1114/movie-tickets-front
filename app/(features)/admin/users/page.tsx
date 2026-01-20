@@ -14,6 +14,7 @@ import { api } from "@/_lib/axios";
 import { LoadingSpinner } from "@/_ui/components/partials/LoadingSpinner";
 import { IUser } from "@/_models/entities/user.interface";
 import { useAuth } from "@/_context/AuthContext";
+import { AxiosError } from "axios";
 
 export default function UsersPage() {
   const { user: loggedUser } = useAuth();
@@ -26,8 +27,12 @@ export default function UsersPage() {
       try {
         const res = await api.get<IUser[]>("/users");
         setUsers(res.data);
-      } catch (error) {
-        console.error("Error fetching users:", error);
+      } catch (error: unknown) {
+        if (error instanceof AxiosError && error.response?.status === 404) {
+          setUsers([]);
+        } else {
+          console.error("Error fetching users:", error);
+        }
       } finally {
         setLoading(false);
       }
@@ -45,8 +50,12 @@ export default function UsersPage() {
     try {
       const res = await api.get<IUser[]>("/users");
       setUsers(res.data);
-    } catch (error) {
-      console.error("Error fetching users:", error);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError && error.response?.status === 404) {
+        setUsers([]);
+      } else {
+        console.error("Error fetching users:", error);
+      }
     } finally {
       setLoading(false);
     }
@@ -87,34 +96,42 @@ export default function UsersPage() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {users.map(
-            (user) =>
-              user.id !== loggedUser.id && (
-                <TableRow key={user.id}>
-                  <TableCell className="w-6 text-center">
-                    <span
-                      className={`inline-block h-3 w-3 rounded-full ${user.disabled ? "bg-red-500" : "bg-green-500"}`}
-                    ></span>
-                  </TableCell>
-                  <TableCell>{user.name}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>{user.role.toUpperCase()}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      {!user.disabled && (
-                        <ActionButton variant="danger" onClick={() => handleDisableUser(user.id)}>
-                          Disable
-                        </ActionButton>
-                      )}
-                      {user.disabled && (
-                        <ActionButton variant="success" onClick={() => handleEnableUser(user.id)}>
-                          Enable
-                        </ActionButton>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              )
+          {users.filter((user) => user.id !== loggedUser.id).length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={5} className="py-8 text-center text-gray-400">
+                No users were found.
+              </TableCell>
+            </TableRow>
+          ) : (
+            users.map(
+              (user) =>
+                user.id !== loggedUser.id && (
+                  <TableRow key={user.id}>
+                    <TableCell className="w-6 text-center">
+                      <span
+                        className={`inline-block h-3 w-3 rounded-full ${user.disabled ? "bg-red-500" : "bg-green-500"}`}
+                      ></span>
+                    </TableCell>
+                    <TableCell>{user.name}</TableCell>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell>{user.role.toUpperCase()}</TableCell>
+                    <TableCell>
+                      <div className="flex gap-2">
+                        {!user.disabled && (
+                          <ActionButton variant="danger" onClick={() => handleDisableUser(user.id)}>
+                            Disable
+                          </ActionButton>
+                        )}
+                        {user.disabled && (
+                          <ActionButton variant="success" onClick={() => handleEnableUser(user.id)}>
+                            Enable
+                          </ActionButton>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )
+            )
           )}
         </TableBody>
       </StyledTable>

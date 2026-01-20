@@ -12,6 +12,9 @@ import { IShow } from "@/_models/entities/show.interface";
 import { IMovie } from "@/_models/entities/movie.interface";
 import { IRoom } from "@/_models/entities/room.interface";
 import { api } from "@/_lib/axios";
+import FormFeedback, { IFormFeedbackProps } from "@/_ui/components/forms/FormFeedback";
+import { AxiosError } from "axios";
+import { toLocalDateTimeString } from "@/_utils/dateUtils";
 
 const showSchema = z.object({
   movieId: z.string().min(1, { message: "Movie is required" }),
@@ -33,8 +36,13 @@ interface ShowFormModalProps {
 
 export function ShowFormModal({ isOpen, onClose, onSubmit, show }: ShowFormModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitState, setSubmitState] = useState<{
+    status: IFormFeedbackProps["status"];
+    error?: string;
+  } | null>(null);
   const [movies, setMovies] = useState<IMovie[]>([]);
   const [rooms, setRooms] = useState<IRoom[]>([]);
+  const [isLoadingData, setIsLoadingData] = useState(false);
 
   const {
     register,
@@ -54,6 +62,9 @@ export function ShowFormModal({ isOpen, onClose, onSubmit, show }: ShowFormModal
   // Fetch movies and rooms for dropdowns
   useEffect(() => {
     const fetchData = async () => {
+      if (!isOpen) return;
+
+      setIsLoadingData(true);
       try {
         const [moviesRes, roomsRes] = await Promise.all([
           api.get<IMovie[]>("/movies"),
@@ -63,24 +74,27 @@ export function ShowFormModal({ isOpen, onClose, onSubmit, show }: ShowFormModal
         setRooms(roomsRes.data);
       } catch (error) {
         console.error("Error fetching data:", error);
+      } finally {
+        setIsLoadingData(false);
       }
     };
 
-    if (isOpen) {
-      fetchData();
-    }
+    fetchData();
   }, [isOpen]);
 
-  // Reset form with show data when show prop changes
+  // Reset form with show data when show prop changes AND data is loaded
   useEffect(() => {
-    if (show) {
+    // Don't reset until data is loaded
+    if (isLoadingData) return;
+
+    if (show && movies.length > 0 && rooms.length > 0) {
       reset({
         movieId: show.movie.id,
         roomId: show.room.id,
-        startTime: new Date(show.startTime).toISOString().slice(0, 16),
+        startTime: toLocalDateTimeString(show.startTime),
         price: show.price,
       });
-    } else {
+    } else if (!show) {
       reset({
         movieId: "",
         roomId: "",
@@ -88,16 +102,26 @@ export function ShowFormModal({ isOpen, onClose, onSubmit, show }: ShowFormModal
         price: 0,
       });
     }
-  }, [show, reset]);
+  }, [show, reset, movies, rooms, isLoadingData]);
 
   const handleFormSubmit = async (data: ShowFormData) => {
     setIsSubmitting(true);
+    setSubmitState({ status: "loading" });
     try {
       await onSubmit(data);
+      setSubmitState({ status: "success" });
       reset();
-      onClose();
+      setTimeout(() => {
+        onClose();
+        setSubmitState(null);
+      }, 1000);
     } catch (error) {
       console.error("Error submitting form:", error);
+      if (error instanceof AxiosError && error.response?.data?.message) {
+        setSubmitState({ status: "error", error: error.response.data.message });
+      } else {
+        setSubmitState({ status: "error", error: "Failed to save show. Please try again." });
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -105,6 +129,7 @@ export function ShowFormModal({ isOpen, onClose, onSubmit, show }: ShowFormModal
 
   const handleClose = () => {
     reset();
+    setSubmitState(null);
     onClose();
   };
 
@@ -154,6 +179,14 @@ export function ShowFormModal({ isOpen, onClose, onSubmit, show }: ShowFormModal
           {...register("price", { valueAsNumber: true })}
           errors={errors.price?.message}
         />
+
+        {submitState && (
+          <FormFeedback
+            status={submitState.status}
+            errorMessage={submitState.error}
+            successMessage="Show saved successfully!"
+          />
+        )}
 
         <div className="flex justify-end gap-3 pt-4">
           <button

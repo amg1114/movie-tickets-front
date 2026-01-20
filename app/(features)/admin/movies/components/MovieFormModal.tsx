@@ -8,6 +8,8 @@ import { Modal } from "@/_ui/components/modal";
 import StyledInput from "@/_ui/components/forms/StyledInput";
 import { IMovie } from "@/_models/entities/movie.interface";
 import StyledDatePicker from "@/_ui/components/forms/StyledDatePicker";
+import FormFeedback, { IFormFeedbackProps } from "@/_ui/components/forms/FormFeedback";
+import { AxiosError } from "axios";
 
 const movieSchema = z.object({
   title: z.string().min(1, { message: "Title is required" }),
@@ -30,6 +32,10 @@ interface MovieFormModalProps {
 
 export function MovieFormModal({ isOpen, onClose, onSubmit, movie }: MovieFormModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitState, setSubmitState] = useState<{
+    status: IFormFeedbackProps["status"];
+    error?: string;
+  } | null>(null);
 
   const {
     register,
@@ -69,12 +75,22 @@ export function MovieFormModal({ isOpen, onClose, onSubmit, movie }: MovieFormMo
 
   const handleFormSubmit = async (data: MovieFormData) => {
     setIsSubmitting(true);
+    setSubmitState({ status: "loading" });
     try {
       await onSubmit(data);
+      setSubmitState({ status: "success" });
       reset();
-      onClose();
+      setTimeout(() => {
+        onClose();
+        setSubmitState(null);
+      }, 1000);
     } catch (error) {
       console.error("Error submitting form:", error);
+      if (error instanceof AxiosError && error.response?.data?.message) {
+        setSubmitState({ status: "error", error: error.response.data.message });
+      } else {
+        setSubmitState({ status: "error", error: "Failed to save movie. Please try again." });
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -82,6 +98,7 @@ export function MovieFormModal({ isOpen, onClose, onSubmit, movie }: MovieFormMo
 
   const handleClose = () => {
     reset();
+    setSubmitState(null);
     onClose();
   };
 
@@ -93,13 +110,8 @@ export function MovieFormModal({ isOpen, onClose, onSubmit, movie }: MovieFormMo
       size="md"
     >
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
-        {movie && (
-          <div className="text-sm text-gray-500">
-            Editing Room ID: <strong>{movie.id}</strong>
-          </div>
-        )}
         <StyledInput
-          label="Room Name"
+          label="Movie Title"
           id="title"
           placeholder="Enter movie title"
           {...register("title")}
@@ -137,6 +149,14 @@ export function MovieFormModal({ isOpen, onClose, onSubmit, movie }: MovieFormMo
           {...register("releaseDate")}
           errors={errors.releaseDate?.message}
         />
+
+        {submitState && (
+          <FormFeedback
+            status={submitState.status}
+            errorMessage={submitState.error}
+            successMessage="Movie saved successfully!"
+          />
+        )}
 
         <div className="flex justify-end gap-3 pt-4">
           <button

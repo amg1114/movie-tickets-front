@@ -15,6 +15,7 @@ import { IRoom } from "@/_models/entities/room.interface";
 import { LoadingSpinner } from "@/_ui/components/partials/LoadingSpinner";
 import { Plus } from "lucide-react";
 import { RoomFormModal } from "@/(features)/admin/rooms/components/RoomFormModal";
+import { AxiosError } from "axios";
 
 export default function RoomsPage() {
   const [loading, setLoading] = useState(true);
@@ -27,8 +28,12 @@ export default function RoomsPage() {
       try {
         const res = await api.get<IRoom[]>("/rooms");
         setRooms(res.data);
-      } catch (error) {
-        console.error("Error fetching rooms:", error);
+      } catch (error: unknown) {
+        if (error instanceof AxiosError && error.response?.status === 404) {
+          setRooms([]);
+        } else {
+          console.error("Error fetching rooms:", error);
+        }
       } finally {
         setLoading(false);
       }
@@ -99,23 +104,31 @@ export default function RoomsPage() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {rooms.map((room) => (
-            <TableRow key={room.id}>
-              <TableCell>{room.name}</TableCell>
-              <TableCell>{room.description}</TableCell>
-              <TableCell>{room.capacity}</TableCell>
-              <TableCell>
-                <div className="flex gap-2">
-                  <ActionButton variant="secondary" onClick={() => openEditModal(room)}>
-                    Edit
-                  </ActionButton>
-                  <ActionButton variant="danger" onClick={() => handleDeleteRoom(room.id)}>
-                    Delete
-                  </ActionButton>
-                </div>
+          {rooms.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={4} className="py-8 text-center text-gray-400">
+                No rooms were found. Create your first room to get started.
               </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            rooms.map((room) => (
+              <TableRow key={room.id}>
+                <TableCell>{room.name}</TableCell>
+                <TableCell>{room.description}</TableCell>
+                <TableCell>{room.capacity}</TableCell>
+                <TableCell>
+                  <div className="flex gap-2">
+                    <ActionButton variant="secondary" onClick={() => openEditModal(room)}>
+                      Edit
+                    </ActionButton>
+                    <ActionButton variant="danger" onClick={() => handleDeleteRoom(room.id)}>
+                      Delete
+                    </ActionButton>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </StyledTable>
 

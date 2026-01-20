@@ -19,3 +19,29 @@ api.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
+// Handle response errors globally
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response) {
+      const { status, data } = error.response;
+
+      if (
+        status === 403 &&
+        data?.message &&
+        (data.message.toLowerCase().includes("disabled") ||
+          data.message.toLowerCase().includes("account has been disabled"))
+      ) {
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("auth_token");
+          localStorage.removeItem("auth_user");
+
+          window.location.href = "/";
+        }
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);

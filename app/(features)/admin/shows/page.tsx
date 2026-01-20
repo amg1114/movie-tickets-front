@@ -16,6 +16,8 @@ import { Plus } from "lucide-react";
 import { ShowFormModal } from "@/(features)/admin/shows/components/ShowFormModal";
 import { IShow } from "@/_models/entities/show.interface";
 import Link from "next/link";
+import { AxiosError } from "axios";
+import { formatDateTime, formatCurrency } from "@/_utils/dateUtils";
 
 export default function AdminShowsPage() {
   const [loading, setLoading] = useState(true);
@@ -28,8 +30,12 @@ export default function AdminShowsPage() {
       try {
         const res = await api.get<IShow[]>("/shows");
         setShows(res.data);
-      } catch (error) {
-        console.error("Error fetching shows:", error);
+      } catch (error: unknown) {
+        if (error instanceof AxiosError && error.response?.status === 404) {
+          setShows([]);
+        } else {
+          console.error("Error fetching shows:", error);
+        }
       } finally {
         setLoading(false);
       }
@@ -70,8 +76,12 @@ export default function AdminShowsPage() {
     try {
       const res = await api.get<IShow[]>("/shows");
       setShows(res.data);
-    } catch (error) {
-      console.error("Error fetching shows:", error);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError && error.response?.status === 404) {
+        setShows([]);
+      } else {
+        console.error("Error fetching shows:", error);
+      }
     } finally {
       setLoading(false);
     }
@@ -101,34 +111,36 @@ export default function AdminShowsPage() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {shows.map((show) => (
-            <TableRow key={show.id}>
-              <TableCell>
-                <Link href="/admin/movies">{show.movie.title}</Link>
-              </TableCell>
-              <TableCell>{new Date(show.startTime).toLocaleString()}</TableCell>
-              <TableCell>{new Date(show.endTime).toLocaleString()}</TableCell>
-              <TableCell>
-                $
-                {show.price.toLocaleString("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                })}
-              </TableCell>
-              <TableCell>
-                {show.startTime >= new Date() && (
-                  <div className="flex gap-2">
-                    <ActionButton variant="secondary" onClick={() => openEditModal(show)}>
-                      Edit
-                    </ActionButton>
-                    <ActionButton variant="danger" onClick={() => handleDeleteShow(show.id)}>
-                      Delete
-                    </ActionButton>
-                  </div>
-                )}
+          {shows.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={5} className="py-8 text-center text-gray-400">
+                No shows were found. Create your first show to get started.
               </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            shows.map((show) => (
+              <TableRow key={show.id}>
+                <TableCell>
+                  <Link href="/admin/movies">{show.movie.title}</Link>
+                </TableCell>
+                <TableCell>{formatDateTime(show.startTime)}</TableCell>
+                <TableCell>{formatDateTime(show.endTime)}</TableCell>
+                <TableCell>{formatCurrency(show.price)}</TableCell>
+                <TableCell>
+                  {new Date(show.startTime) >= new Date() && (
+                    <div className="flex gap-2">
+                      <ActionButton variant="secondary" onClick={() => openEditModal(show)}>
+                        Edit
+                      </ActionButton>
+                      <ActionButton variant="danger" onClick={() => handleDeleteShow(show.id)}>
+                        Delete
+                      </ActionButton>
+                    </div>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </StyledTable>
 

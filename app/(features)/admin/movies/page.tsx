@@ -14,6 +14,8 @@ import {
   TableCell,
 } from "@/_ui/components/table";
 import { ActionButton } from "@/_ui/components/table/ActionButton";
+import { formatDate } from "@/_utils/dateUtils";
+import { AxiosError } from "axios";
 import { FilmIcon, Plus } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -30,8 +32,12 @@ export default function MoviesAdminPage() {
       try {
         const res = await api.get<IMovie[]>("/movies");
         setMovies(res.data);
-      } catch (error) {
-        console.error("Error fetching movies:", error);
+      } catch (error: unknown) {
+        if (error instanceof AxiosError && error.response?.status === 404) {
+          setMovies([]);
+        } else {
+          console.error("Error fetching movies:", error);
+        }
       } finally {
         setLoading(false);
       }
@@ -119,44 +125,52 @@ export default function MoviesAdminPage() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {movies.map((movie) => (
-            <TableRow key={movie.id}>
-              <TableCell className="text-center">
-                {movie.thumbnailUrl && (
-                  <Image
-                    src={movie.thumbnailUrl}
-                    alt={movie.title}
-                    width={50}
-                    height={75}
-                    className="mx-auto cursor-pointer rounded-md object-cover"
-                  />
-                )}
-                {!movie.thumbnailUrl && <FilmIcon className="mx-auto text-3xl" />}
-              </TableCell>
-              <TableCell>
-                <h3 className="font-bold">{movie.title}</h3>
-                <p>
-                  {movie.description} <br />
-                  <span className="text-end italic">{movie.director}</span>{" "}
-                </p>
-              </TableCell>
-              <TableCell>{movie.duration}</TableCell>
-              <TableCell>{new Date(movie.releaseDate).toLocaleDateString()}</TableCell>
-              <TableCell>
-                <div className="flex flex-col gap-2">
-                  <ActionButton variant="secondary" onClick={() => openEditModal(movie)}>
-                    Edit
-                  </ActionButton>
-                  <ActionButton variant="danger" onClick={() => handleDeleteMovie(movie.id)}>
-                    Delete
-                  </ActionButton>
-                  <ActionButton variant="primary" onClick={() => openThumbnailModal(movie)}>
-                    Upload Thumbnail
-                  </ActionButton>
-                </div>
+          {movies.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={5} className="py-8 text-center text-gray-400">
+                No movies were found. Add your first movie to get started.
               </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            movies.map((movie) => (
+              <TableRow key={movie.id}>
+                <TableCell className="text-center">
+                  {movie.thumbnailUrl && (
+                    <Image
+                      src={movie.thumbnailUrl}
+                      alt={movie.title}
+                      width={50}
+                      height={75}
+                      className="mx-auto cursor-pointer rounded-md object-cover"
+                    />
+                  )}
+                  {!movie.thumbnailUrl && <FilmIcon className="mx-auto text-3xl" />}
+                </TableCell>
+                <TableCell>
+                  <h3 className="font-bold">{movie.title}</h3>
+                  <p>
+                    {movie.description} <br />
+                    <span className="text-end italic">{movie.director}</span>{" "}
+                  </p>
+                </TableCell>
+                <TableCell>{movie.duration}</TableCell>
+                <TableCell>{formatDate(movie.releaseDate)}</TableCell>
+                <TableCell>
+                  <div className="flex flex-col gap-2">
+                    <ActionButton variant="secondary" onClick={() => openEditModal(movie)}>
+                      Edit
+                    </ActionButton>
+                    <ActionButton variant="danger" onClick={() => handleDeleteMovie(movie.id)}>
+                      Delete
+                    </ActionButton>
+                    <ActionButton variant="primary" onClick={() => openThumbnailModal(movie)}>
+                      Upload Thumbnail
+                    </ActionButton>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </StyledTable>
       <MovieFormModal
