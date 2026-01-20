@@ -8,7 +8,7 @@ export function Header() {
   const { user, logout } = useAuth();
 
   const routes = [
-    { href: "/shows", label: "Shows", adminOnly: false },
+    { href: "/shows", label: "Shows", userOnly: true },
     { href: "/admin/shows", label: "Shows", adminOnly: true },
     { href: "/admin/rooms", label: "Rooms", adminOnly: true },
     { href: "/admin/movies", label: "Movies", adminOnly: true },
@@ -32,7 +32,8 @@ export function Header() {
           <ul className="flex gap-5">
             {routes.map(
               (route, index) =>
-                (!route.adminOnly || (user && user.role === "admin")) && (
+                (!route.adminOnly || (user && user.role === "admin")) &&
+                (!route.userOnly || (user && user.role === "user")) && (
                   <li key={index}>
                     <Link
                       href={route.href}
