@@ -111,28 +111,36 @@ export default function AdminShowsPage() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {shows.map((show) => (
-            <TableRow key={show.id}>
-              <TableCell>
-                <Link href="/admin/movies">{show.movie.title}</Link>
-              </TableCell>
-              <TableCell>{formatDateTime(show.startTime)}</TableCell>
-              <TableCell>{formatDateTime(show.endTime)}</TableCell>
-              <TableCell>{formatCurrency(show.price)}</TableCell>
-              <TableCell>
-                {new Date(show.startTime) >= new Date() && (
-                  <div className="flex gap-2">
-                    <ActionButton variant="secondary" onClick={() => openEditModal(show)}>
-                      Edit
-                    </ActionButton>
-                    <ActionButton variant="danger" onClick={() => handleDeleteShow(show.id)}>
-                      Delete
-                    </ActionButton>
-                  </div>
-                )}
+          {shows.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={5} className="py-8 text-center text-gray-400">
+                No shows were found. Create your first show to get started.
               </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            shows.map((show) => (
+              <TableRow key={show.id}>
+                <TableCell>
+                  <Link href="/admin/movies">{show.movie.title}</Link>
+                </TableCell>
+                <TableCell>{formatDateTime(show.startTime)}</TableCell>
+                <TableCell>{formatDateTime(show.endTime)}</TableCell>
+                <TableCell>{formatCurrency(show.price)}</TableCell>
+                <TableCell>
+                  {new Date(show.startTime) >= new Date() && (
+                    <div className="flex gap-2">
+                      <ActionButton variant="secondary" onClick={() => openEditModal(show)}>
+                        Edit
+                      </ActionButton>
+                      <ActionButton variant="danger" onClick={() => handleDeleteShow(show.id)}>
+                        Delete
+                      </ActionButton>
+                    </div>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </StyledTable>
 

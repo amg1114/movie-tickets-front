@@ -125,44 +125,52 @@ export default function MoviesAdminPage() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {movies.map((movie) => (
-            <TableRow key={movie.id}>
-              <TableCell className="text-center">
-                {movie.thumbnailUrl && (
-                  <Image
-                    src={movie.thumbnailUrl}
-                    alt={movie.title}
-                    width={50}
-                    height={75}
-                    className="mx-auto cursor-pointer rounded-md object-cover"
-                  />
-                )}
-                {!movie.thumbnailUrl && <FilmIcon className="mx-auto text-3xl" />}
-              </TableCell>
-              <TableCell>
-                <h3 className="font-bold">{movie.title}</h3>
-                <p>
-                  {movie.description} <br />
-                  <span className="text-end italic">{movie.director}</span>{" "}
-                </p>
-              </TableCell>
-              <TableCell>{movie.duration}</TableCell>
-              <TableCell>{formatDate(movie.releaseDate)}</TableCell>
-              <TableCell>
-                <div className="flex flex-col gap-2">
-                  <ActionButton variant="secondary" onClick={() => openEditModal(movie)}>
-                    Edit
-                  </ActionButton>
-                  <ActionButton variant="danger" onClick={() => handleDeleteMovie(movie.id)}>
-                    Delete
-                  </ActionButton>
-                  <ActionButton variant="primary" onClick={() => openThumbnailModal(movie)}>
-                    Upload Thumbnail
-                  </ActionButton>
-                </div>
+          {movies.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={5} className="py-8 text-center text-gray-400">
+                No movies were found. Add your first movie to get started.
               </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            movies.map((movie) => (
+              <TableRow key={movie.id}>
+                <TableCell className="text-center">
+                  {movie.thumbnailUrl && (
+                    <Image
+                      src={movie.thumbnailUrl}
+                      alt={movie.title}
+                      width={50}
+                      height={75}
+                      className="mx-auto cursor-pointer rounded-md object-cover"
+                    />
+                  )}
+                  {!movie.thumbnailUrl && <FilmIcon className="mx-auto text-3xl" />}
+                </TableCell>
+                <TableCell>
+                  <h3 className="font-bold">{movie.title}</h3>
+                  <p>
+                    {movie.description} <br />
+                    <span className="text-end italic">{movie.director}</span>{" "}
+                  </p>
+                </TableCell>
+                <TableCell>{movie.duration}</TableCell>
+                <TableCell>{formatDate(movie.releaseDate)}</TableCell>
+                <TableCell>
+                  <div className="flex flex-col gap-2">
+                    <ActionButton variant="secondary" onClick={() => openEditModal(movie)}>
+                      Edit
+                    </ActionButton>
+                    <ActionButton variant="danger" onClick={() => handleDeleteMovie(movie.id)}>
+                      Delete
+                    </ActionButton>
+                    <ActionButton variant="primary" onClick={() => openThumbnailModal(movie)}>
+                      Upload Thumbnail
+                    </ActionButton>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </StyledTable>
       <MovieFormModal

@@ -104,23 +104,31 @@ export default function RoomsPage() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {rooms.map((room) => (
-            <TableRow key={room.id}>
-              <TableCell>{room.name}</TableCell>
-              <TableCell>{room.description}</TableCell>
-              <TableCell>{room.capacity}</TableCell>
-              <TableCell>
-                <div className="flex gap-2">
-                  <ActionButton variant="secondary" onClick={() => openEditModal(room)}>
-                    Edit
-                  </ActionButton>
-                  <ActionButton variant="danger" onClick={() => handleDeleteRoom(room.id)}>
-                    Delete
-                  </ActionButton>
-                </div>
+          {rooms.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={4} className="py-8 text-center text-gray-400">
+                No rooms were found. Create your first room to get started.
               </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            rooms.map((room) => (
+              <TableRow key={room.id}>
+                <TableCell>{room.name}</TableCell>
+                <TableCell>{room.description}</TableCell>
+                <TableCell>{room.capacity}</TableCell>
+                <TableCell>
+                  <div className="flex gap-2">
+                    <ActionButton variant="secondary" onClick={() => openEditModal(room)}>
+                      Edit
+                    </ActionButton>
+                    <ActionButton variant="danger" onClick={() => handleDeleteRoom(room.id)}>
+                      Delete
+                    </ActionButton>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </StyledTable>
 

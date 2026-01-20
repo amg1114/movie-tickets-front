@@ -98,48 +98,59 @@ export default function TicketsPage() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {tickets.map((ticket) => (
-            <TableRow key={ticket.id}>
-              <TableCell className="w-6 text-center">
-                <Link href={`/shows/${ticket.show.id}`}>
-                  <GlobeIcon className="mx-auto text-2xl" strokeWidth={2.5} />
-                </Link>
-              </TableCell>
-              <TableCell>
-                <span
-                  className={clsx(`rounded-full} inline-block h-3 w-3 rounded-full`, {
-                    "bg-green-500": ticket.status === "CONFIRMED",
-                    "bg-yellow-500": ticket.status === "PENDING",
-                    "bg-red-500": ticket.status === "CANCELLED",
-                  })}
-                ></span>
-                <span className="ml-2 capitalize">{ticket.status}</span>
-              </TableCell>
-              <TableCell>
-                {ticket.user.name} <br />
-                <a href={`mailto:${ticket.user.email}`} className="underline hover:font-semibold">
-                  {ticket.user.email}
-                </a>
-              </TableCell>
-
-              <TableCell>{ticket.quantity}</TableCell>
-              <TableCell>{formatCurrency(ticket.total_amount)}</TableCell>
-              <TableCell>
-                <div className="flex gap-2">
-                  {ticket.status === "PENDING" && (
-                    <ActionButton variant="success" onClick={() => handleCompleteTicket(ticket.id)}>
-                      Complete
-                    </ActionButton>
-                  )}
-                  {ticket.status === "PENDING" && (
-                    <ActionButton variant="danger" onClick={() => handleCancelTicket(ticket.id)}>
-                      Cancel
-                    </ActionButton>
-                  )}
-                </div>
+          {tickets.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={6} className="py-8 text-center text-gray-400">
+                No tickets were found.
               </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            tickets.map((ticket) => (
+              <TableRow key={ticket.id}>
+                <TableCell className="w-6 text-center">
+                  <Link href={`/shows/${ticket.show.id}`}>
+                    <GlobeIcon className="mx-auto text-2xl" strokeWidth={2.5} />
+                  </Link>
+                </TableCell>
+                <TableCell>
+                  <span
+                    className={clsx(`rounded-full} inline-block h-3 w-3 rounded-full`, {
+                      "bg-green-500": ticket.status === "CONFIRMED",
+                      "bg-yellow-500": ticket.status === "PENDING",
+                      "bg-red-500": ticket.status === "CANCELLED",
+                    })}
+                  ></span>
+                  <span className="ml-2 capitalize">{ticket.status}</span>
+                </TableCell>
+                <TableCell>
+                  {ticket.user.name} <br />
+                  <a href={`mailto:${ticket.user.email}`} className="underline hover:font-semibold">
+                    {ticket.user.email}
+                  </a>
+                </TableCell>
+
+                <TableCell>{ticket.quantity}</TableCell>
+                <TableCell>{formatCurrency(ticket.total_amount)}</TableCell>
+                <TableCell>
+                  <div className="flex gap-2">
+                    {ticket.status === "PENDING" && (
+                      <ActionButton
+                        variant="success"
+                        onClick={() => handleCompleteTicket(ticket.id)}
+                      >
+                        Complete
+                      </ActionButton>
+                    )}
+                    {ticket.status === "PENDING" && (
+                      <ActionButton variant="danger" onClick={() => handleCancelTicket(ticket.id)}>
+                        Cancel
+                      </ActionButton>
+                    )}
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </StyledTable>
     </div>
