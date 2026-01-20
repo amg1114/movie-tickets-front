@@ -15,6 +15,7 @@ interface AuthContextType {
   register: (data: IRegisterRequest) => Promise<void>;
   logout: () => void;
   updateUser: (user: IUser) => void;
+  hasRequiredRole: (requiredRole?: string | string[]) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -93,6 +94,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(USER_KEY, JSON.stringify(updatedUser));
   };
 
+  const hasRequiredRole = (requiredRole?: string | string[]): boolean => {
+    // If no role required, only check if authenticated
+    if (!requiredRole) {
+      return !!user && !!token;
+    }
+
+    // Check if user is authenticated
+    if (!user || !token) {
+      return false;
+    }
+
+    // Check if user has required role(s)
+    if (Array.isArray(requiredRole)) {
+      return requiredRole.includes(user.role);
+    }
+
+    return user.role === requiredRole;
+  };
+
   const value: AuthContextType = {
     user,
     token,
@@ -102,6 +122,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     register,
     logout,
     updateUser,
+    hasRequiredRole,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
